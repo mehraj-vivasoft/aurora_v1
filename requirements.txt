@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+langchain
+openai
+python-dotenv
+langchain_sqlserver
+langchain_community
+langchain_openai
+azure-search-documents
+sqlalchemy
+pyodbc
+azure-identity
+pandas
