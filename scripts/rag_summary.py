@@ -35,7 +35,7 @@ class HTARecord(BaseModel):
     clinical_outcomes: Optional[str] = None
     data_packages: Optional[str] = None
     study_type: Optional[str] = None
-    evendence_synthesis: Optional[str] = None  # Note: keeping the typo as it's in the original data
+    evendence_synthesis: Optional[str] = None 
     outcomes_from_evidence: Optional[str] = None
     coa_instruments: Optional[str] = None
     coa_type: Optional[str] = None
