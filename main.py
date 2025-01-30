@@ -1,11 +1,20 @@
 from fastapi import FastAPI
 from src.controllers import health, filters, chat
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="Project Aurora",
     description="Backend for Project Aurora",
     version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(health.router)

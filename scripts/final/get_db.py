@@ -19,7 +19,7 @@ def get_db():
 
 def get_query():
     query = """
-    SELECT TOP 5 
+    SELECT TOP 500 
         ID,
         HTA_AGENCY_NAME,
         COUNTRY,
@@ -70,6 +70,6 @@ def get_query():
         REIMBURSED_INDICATION,
         RWE_DETAILS
     FROM dbo.HTA
-    WHERE ID BETWEEN 30000 AND 30500
+    WHERE ID BETWEEN 50000 AND 60000
     """
     return query

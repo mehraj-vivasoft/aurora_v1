@@ -28,7 +28,7 @@ def get_vector_store() -> AzureSearch:
     vector_store_address: str = os.getenv("AZURE_SEARCH_ENDPOINT")
     vector_store_password: str = os.getenv("AZURE_SEARCH_ADMIN_KEY")    
     
-    index_name: str = "langchain-vector-demo"
+    index_name: str = "processed-index-v1"
     # Specify additional properties for the Azure client such as the following https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#configurations # noqa: E501
     vector_store: AzureSearch = AzureSearch(
         azure_search_endpoint=vector_store_address,

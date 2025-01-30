@@ -33,14 +33,12 @@ def create_rag_chain(context: str, question: str) -> BaseMessage:
     # Create messages in the correct format
     messages = [
         ("system", """You are a medical trial research assistant. 
-        Provide an accurate answer based solely on the following context."""),
-        ("human", f"""Context:
+        Provide an accurate answer based on the following context."""),
+        ("human", f"""Background Context:
         {context}
 
-        Question: {question}
-
-        If the context does not contain sufficient information to answer the question, 
-        respond with: "I cannot find a definitive answer in the provided context."
+        Give me a proper answer based on the above context.
+        My Question: {question}
         """)
     ]
     
@@ -50,7 +48,7 @@ def create_rag_chain(context: str, question: str) -> BaseMessage:
     # return llm.invoke(input=messages)
     return llm.invoke(input=messages)
 
-def run_query(query):    
+def run_query(query):
     
     
     # Initialize vector store
@@ -64,7 +62,7 @@ def run_query(query):
         try:
             # Perform similarity search
             res = vec_store.similarity_search(
-                query=question, k=5, search_type="hybrid"
+                query=question, k=10, search_type="hybrid"
             )
             
             # Combine context from retrieved documents
