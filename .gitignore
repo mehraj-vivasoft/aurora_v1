@@ -3,3 +3,25 @@ ignore
 .env
 
 venv
+
+
+# Ignore environment files and logs
+.env
+venv
+tmp
+logs
+
+# Ignore compiled Python files
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore Cython files
+*.pyx
+
+# Ignore cache directories
+__pycache__/
+*/__pycache__/
+
+
+hta_docs.txt

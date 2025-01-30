@@ -63,7 +63,7 @@ def get_embedder():
     return embeddings
 
 
-def get_vector_store(embeddings):
+def get_vector_store(embeddings: AzureOpenAIEmbeddings):
     index_name: str = "langchain-vector-demo"
     # Specify additional properties for the Azure client such as the following https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#configurations # noqa: E501
     vector_store: AzureSearch = AzureSearch(

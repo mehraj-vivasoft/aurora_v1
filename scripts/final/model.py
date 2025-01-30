@@ -3,10 +3,10 @@ from typing import Optional, List
 from datetime import datetime
 
 class HTARecord(BaseModel):
-    id: Optional[int] = None
+    id: Optional[str] = None
     hta_agency_name: Optional[str] = None
     country: Optional[str] = None
-    hta_decision_dt: Optional[datetime] = None
+    hta_decision_dt: Optional[str] = None
     biomarkers: Optional[str] = None
     primary_disease: Optional[str] = None
     drug_name: Optional[str] = None

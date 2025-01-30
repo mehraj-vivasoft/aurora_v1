@@ -1,8 +1,4 @@
-from langchain_core.documents import Document
-from typing import List
-
 from pydantic import BaseModel
-from scripts.final.model import HTARecord
 
 class DomainKnowledge(BaseModel):
     general_hta_conclusion: str
@@ -29,10 +25,26 @@ domain_knowledge = DomainKnowledge(
     clinical_outcomes= "Captures key results from clinical studies, including the effectiveness and safety of an intervention. It typically includes measures such as survival rates, disease progression, symptom improvement, and adverse effects."
 )
 
-def get_docs(hta_entry: HTARecord) -> List[Document]:
-    
-    
-    
-    return []
-
-
+def get_domain_intro(domain: str) -> str:
+    if domain == "general_hta_conclusion":
+        return domain_knowledge.general_hta_conclusion
+    elif domain == "intervention_add_details":
+        return domain_knowledge.intervention_add_details
+    elif domain == "comparator_add_details":
+        return domain_knowledge.comparator_add_details
+    elif domain == "data_packages":
+        return domain_knowledge.data_packages
+    elif domain == "outcomes_from_evidence":
+        return domain_knowledge.outcomes_from_evidence
+    elif domain == "coa_details":
+        return domain_knowledge.coa_details
+    elif domain == "econ_model_design":
+        return domain_knowledge.econ_model_design
+    elif domain == "payer_decision":
+        return domain_knowledge.payer_decision
+    elif domain == "rwe_details":
+        return domain_knowledge.rwe_details
+    elif domain == "clinical_outcomes":
+        return domain_knowledge.clinical_outcomes
+    else:
+        return ""
