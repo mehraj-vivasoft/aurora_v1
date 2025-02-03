@@ -48,9 +48,11 @@ def create_rag_chain(context: str, question: str) -> BaseMessage:
     # return llm.invoke(input=messages)
     return llm.invoke(input=messages)
 
-def run_query(query):
+def run_query(query, filtered_ids = []):
     
-    
+    filter_str = " or ".join([f"entry_id eq '{id}'" for id in filtered_ids])
+    print(filter_str)
+
     # Initialize vector store
     vec_store = get_vector_store()
     
@@ -62,7 +64,7 @@ def run_query(query):
         try:
             # Perform similarity search
             res = vec_store.similarity_search(
-                query=question, k=10, search_type="hybrid"
+                query=question, k=10, search_type="hybrid", filters=filter_str
             )
             
             # Combine context from retrieved documents
@@ -75,6 +77,8 @@ def run_query(query):
             #     "question": question,
             #     "context": context
             # })
+            
+            print(res)
             
             # Print results
             print(f"Question: {question}")

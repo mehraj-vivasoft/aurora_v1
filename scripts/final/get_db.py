@@ -70,6 +70,6 @@ def get_query():
         REIMBURSED_INDICATION,
         RWE_DETAILS
     FROM dbo.HTA
-    WHERE ID BETWEEN 50000 AND 60000
+    WHERE ID BETWEEN 49500 AND 60000
     """
     return query

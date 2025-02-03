@@ -1,24 +1,60 @@
-# Use an official Python runtime as a parent image
-FROM python:3.9-slim
+# Use a more complete Debian-based Python image to support ODBC installation
+FROM python:3.9-slim-buster
 
-# Set the working directory in the container
+# Set environment variables
+ENV ACCEPT_EULA=Y
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Set the working directory
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Install system dependencies and ODBC driver
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gnupg2 \
+    curl \
+    unixodbc \
+    unixodbc-dev \
+    && case $(dpkg --print-architecture) in \
+         amd64) \
+           curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+           && curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+           && apt-get update \
+           && apt-get install -y --no-install-recommends msodbcsql17 \
+           ;; \
+         arm64) \
+           echo "ARM64 architecture detected - using FreeTDS ODBC driver instead" \
+           && apt-get install -y --no-install-recommends \
+              tdsodbc \
+              freetds-bin \
+              freetds-common \
+           && echo "[FreeTDS]\n\
+               Description = FreeTDS Driver\n\
+               Driver = /usr/lib/aarch64-linux-gnu/odbc/libtdsodbc.so\n\
+               Setup = /usr/lib/aarch64-linux-gnu/odbc/libtdsS.so" >> /etc/odbcinst.ini \
+           ;; \
+       esac \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy requirements first to leverage Docker cache
+COPY requirements.txt .
 
-# Make port 8000 available to the world outside this container
-EXPOSE 8000
+# Install Python packages
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir pyodbc
 
-# import env from .env file
+# Copy the rest of the application
+COPY . .
+
+# Copy environment file
 COPY .env .
 
-# Run app.py when the container launches
+# Expose the port
+EXPOSE 8000
+
+# Launch the FastAPI application
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 # To run the docker container, use the following command:
-# docker build -t aurora_v1 .
-# docker run -p 8000:8000 aurora_v1
+# docker build -t aurora-backend .
+# docker run -p 8000:8000 aurora-backend

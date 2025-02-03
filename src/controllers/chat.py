@@ -32,7 +32,7 @@ class ChatRequest(BaseModel):
 async def generate_text(chat_request: ChatRequest) -> str:
     try:
         # Generate response using LangChain    
-        res = run_query(chat_request.query)    
+        res = run_query(chat_request.query, chat_request.filtered_ids)
         return res
     except Exception as e:
         return {"error": str(e)}

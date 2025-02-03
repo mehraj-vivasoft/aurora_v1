@@ -39,6 +39,7 @@ def get_large_docs(hta_entry: HTARecord) -> List[Document]:
         docs.append(
             Document(
                 page_content=content,
+                entry_id=hta_entry.id,
                 metadata=get_metadata(hta_entry)
             )
         )
