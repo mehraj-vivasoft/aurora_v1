@@ -1,6 +1,6 @@
 import pandas as pd
-from scripts.final.get_db import get_db, get_query
-from scripts.final.model import HTARecord, HTARecords
+from src.services.database.get_db import get_db
+from src.services.load.model import HTARecord, HTARecords
 
 
 def convert_df_to_pydantic(df: pd.DataFrame) -> HTARecords:
@@ -13,9 +13,9 @@ def convert_df_to_pydantic(df: pd.DataFrame) -> HTARecords:
         records.append(HTARecord(**row_dict))
     return HTARecords(records=records)
 
-def get_hta_records() -> HTARecords:
+
+def get_hta_records(query: str) -> HTARecords:
     db, engine = get_db()
-    query = get_query()
     df = pd.read_sql_query(query, engine)
     hta_records = convert_df_to_pydantic(df)
     return hta_records

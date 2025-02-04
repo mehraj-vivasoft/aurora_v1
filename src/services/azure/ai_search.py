@@ -21,7 +21,7 @@ def get_embedder(azure_deployment,azure_openai_api_version,azure_endpoint,azure_
     return embeddings
 
 
-def get_vector_store() -> AzureSearch:
+def get_vector_store(index_name: str = "processed-index-v2") -> AzureSearch:
     load_dotenv()
 
     azure_endpoint: str = os.getenv("AZURE_OPENAI_ENDPOINT")
@@ -64,8 +64,7 @@ def get_vector_store() -> AzureSearch:
             filterable=True,
         )
     ]
-    
-    index_name: str = "processed-index-v2"
+            
     # Specify additional properties for the Azure client such as the following https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#configurations # noqa: E501
     vector_store: AzureSearch = AzureSearch(
         azure_search_endpoint=vector_store_address,
