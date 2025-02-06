@@ -10,7 +10,7 @@ router = APIRouter()
 
 class LoadUnprocessedRequest(BaseModel):
     file_name: str
-    index_name: str = "processed-index-v2"
+    index_name: str = "processed-index-v2-test"
 
 @router.post("/unprocessed")
 async def load_unprocessed(load_unprocessed_request: LoadUnprocessedRequest, background_tasks: BackgroundTasks):

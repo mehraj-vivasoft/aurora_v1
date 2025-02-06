@@ -4,7 +4,7 @@ from src.services.load.templates.merged_docs import get_merged_docs
 from src.services.load.get_unprocessed import get_unprocessed_docs
 from src.services.azure.ai_search import get_vector_store
 
-def load_unprocessed_data(file_name: str, index_name: str = "processed-index-v2"):
+def load_unprocessed_data(file_name: str, index_name: str = "processed-index-v2-test"):
     
     hta_docs = get_unprocessed_docs(file_name)
     vec_store = get_vector_store(index_name=index_name)
