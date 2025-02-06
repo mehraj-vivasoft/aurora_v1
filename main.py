@@ -30,7 +30,8 @@ def verify_auth(request: Request):
 
 app.include_router(health.router)
 app.include_router(filters.router, prefix="/filters", tags=["Filters"])
-app.include_router(chat.router, prefix="/chat", tags=["Chat"], dependencies=[Depends(verify_auth)])
+# app.include_router(chat.router, prefix="/chat", tags=["Chat"], dependencies=[Depends(verify_auth)])
+app.include_router(chat.router, prefix="/chat", tags=["Chat"])
 app.include_router(load.router, prefix="/load", tags=["Load Data"], dependencies=[Depends(verify_auth)])
 
 if __name__ == "__main__":

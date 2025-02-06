@@ -1,9 +1,8 @@
 from dotenv import load_dotenv
 import os
 from langchain_core.messages import BaseMessage
-from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings
-from langchain_core.prompts import ChatPromptTemplate
-from langchain.schema.messages import SystemMessage, HumanMessage
+from langchain_openai import AzureChatOpenAI
+from typing import Iterator, Union
 from src.services.azure.ai_search import get_vector_store
 
 def get_azure_chat_openai() -> AzureChatOpenAI:
@@ -25,12 +24,18 @@ def get_azure_chat_openai() -> AzureChatOpenAI:
         temperature=0.5,
     )
 
-def create_rag_chain(context: str, question: str) -> BaseMessage:
+def create_rag_chain(context: str, question: str, stream: bool = False, prev_messages: list[str] = []):
     """Create a RAG chain with a prompt template."""
-    # Create the base chat model
-    llm = get_azure_chat_openai()        
     
-    # Create messages in the correct format
+    llm = get_azure_chat_openai()
+    
+    prev_msg_data = ""
+    
+    if len(prev_messages) > 0:
+        prev_msg_data = """I asked this previous question:
+        {prev_messages}
+        """
+        
     messages = [
         ("system", """You are a medical trial research assistant. 
         Provide an accurate answer based on the following context."""),
@@ -41,51 +46,68 @@ def create_rag_chain(context: str, question: str) -> BaseMessage:
         My Question: {question}
         """)
     ]
-    
-    # print(messages[:50] + "...")
-    # print("\n"*7)  
-    
-    # return llm.invoke(input=messages)
-    return llm.invoke(input=messages)
+        
+    if stream:
+        return llm.stream(input=messages)
+    else:
+        return llm.invoke(input=messages)
 
-def run_query(query, filtered_ids = []):
+def run_query(query, filtered_ids = [], prev_messages=[]):
     
     filter_str = " or ".join([f"entry_id eq '{id}'" for id in filtered_ids])
     print(filter_str)
-
-    # Initialize vector store
-    vec_store = get_vector_store()
     
-    # Example questions
+    vec_store = get_vector_store()    
     questions = [query]
-    
-    # Run the queries
+        
     for question in questions:
-        try:
-            # Perform similarity search
+        try:            
             res = vec_store.similarity_search(
                 query=question, k=10, search_type="hybrid", filters=filter_str
             )
             
-            # Combine context from retrieved documents
             context = "\n\n".join([doc.page_content for doc in res])
             
-            response = create_rag_chain(context, question)
-            
-            # # Invoke the RAG chain
-            # response = rag_chain.invoke({
-            #     "question": question,
-            #     "context": context
-            # })
+            response = create_rag_chain(context, question, stream=False, prev_messages=prev_messages)                        
             
             print(res)
-            
-            # Print results
+                        
             print(f"Question: {question}")
             print(f"Context: {context[:80]}...")  # Truncated for readability
             print(f"Response: {response.content}\n")
             
             return response.content
+        
+        except Exception as e:
+            print(f"Error processing question '{question}': {e}")
+            
+def run_stream(query, filtered_ids = [], prev_messages=[]):
+    
+    filter_str = " or ".join([f"entry_id eq '{id}'" for id in filtered_ids])
+    print(filter_str)
+    
+    vec_store = get_vector_store()    
+    questions = [query]
+        
+    for question in questions:
+        try:            
+            res = vec_store.similarity_search(
+                query=question, k=10, search_type="hybrid", filters=filter_str
+            )
+            
+            context = "\n\n".join([doc.page_content for doc in res])
+            
+            response = create_rag_chain(context, question, stream=True, prev_messages=prev_messages)
+            
+            
+            try:
+                for chunk in response:
+                    if chunk.content:
+                        yield chunk.content.encode("utf-8")
+            except Exception as e:
+                print(f"Error in streaming '{question}': {e}")
+                yield "error : " + str(e)
+                                        
         
         except Exception as e:
             print(f"Error processing question '{question}': {e}")
