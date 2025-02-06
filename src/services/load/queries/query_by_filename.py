@@ -53,7 +53,7 @@ def get_query_by_filename(file_name: str, embedding_status: LoadStatus) -> str:
         WEB_URL,
         REIMBURSED_INDICATION,
         RWE_DETAILS
-    FROM dbo.HTA
+    FROM dbo.temp_HTA_Data
     WHERE FILE_NAME = '{file_name}' AND
     EMBEDDING_STATUS = '{embedding_status}'
     """
